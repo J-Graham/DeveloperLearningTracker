@@ -1,15 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-
+import { ITraining } from 'src/app/models/Training';
+import { TrainingsService } from '../trainings.service';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Options } from 'ng5-slider';
 @Component({
   selector: 'app-available-trainings-list',
+  styleUrls: ['./available-trainings-list.component.css'],
   templateUrl: './available-trainings-list.component.html',
-  styleUrls: ['./available-trainings-list.component.css']
 })
 export class AvailableTrainingsListComponent implements OnInit {
+  trainingsInProgress: ITraining[];
+  trainingsNotInProgress: ITraining[];
+  sliderOptions: Options = {
+    ceil: 100,
+    floor: 0,
+  };
 
-  constructor() { }
+  constructor(private trainingService: TrainingsService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    forkJoin(this.trainingService.getTrainingsInProgress(), this.trainingService.getTrainingsNotInProgress()).subscribe((trainingReturns) => {
+      const [trainingsInProgress, trainingsNotInProgress] = trainingReturns;
+      this.trainingsInProgress = trainingsInProgress;
+      this.trainingsNotInProgress = trainingsNotInProgress;
+    });
   }
 
+  drop(event: CdkDragDrop<string[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      this.flipProgress(event);
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
+  }
+
+  private flipProgress(event: CdkDragDrop<string[], string[]>): void {
+    ((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress = !((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress;
+  }
+
+  markComplete(training: ITraining, index: number): void {
+    this.trainingService.markTrainingComplete(training).subscribe((trainingID) => {
+      this.trainingsInProgress = this.trainingsInProgress.filter((tip) => {
+        return tip.Id !== trainingID;
+      });
+    });
+  }
 }

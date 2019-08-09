@@ -23,9 +23,18 @@ export class TrainingsService {
       DateCompleted: null,
       DateCreated: new Date(),
       Id: 2,
+      InProgress: false,
+      Name: 'Micro Service .Net Core',
+      PercentageComplete: 0.0,
+    },
+    {
+      Completed: false,
+      DateCompleted: null,
+      DateCreated: new Date(),
+      Id: 3,
       InProgress: true,
       Name: 'Learning Go',
-      PercentageComplete: 0.0,
+      PercentageComplete: 50.0,
     },
   ];
 
@@ -49,51 +58,40 @@ export class TrainingsService {
   }
 
   addTraining(training: ITraining): Observable<number> {
-    return Observable.create().pipe(
-      map(() => {
-        training.DateCreated = new Date();
-        training.Id =
-          Math.max.apply(
-            Math,
-            this._trainings.map((t) => {
-              return t.Id;
-            }),
-          ) + 1;
-        this._trainings.push(training);
-        return training.Id;
-      }),
-    );
+    const dateCreated = new Date();
+    const id =
+      Math.max.apply(
+        Math,
+        this._trainings.map((t) => {
+          return t.Id;
+        }),
+      ) + 1;
+
+    return of(this._trainings.push(Object.assign(training, { DateCreated: dateCreated, Id: id }))).pipe(map(() => id));
   }
 
   updateTraining(training: ITraining): void {
     const index = this._trainings.findIndex((t) => t.Id === training.Id);
 
-    if (index && index > 0) {
+    if (index >= 0) {
       this._trainings[index] = training;
     } else {
       throw new Error(`No training found for Id: ${training.Id}`);
     }
   }
 
-  markTrainingComplete(training): void {
+  markTrainingComplete(training): Observable<number> {
     const index = this._trainings.findIndex((t) => t.Id === training.Id);
 
-    if (index && index > 0) {
+    if (index >= 0) {
       this._trainings[index].InProgress = false;
       this._trainings[index].DateCompleted = new Date();
       this._trainings[index].PercentageComplete = 100.0;
+      this._trainings[index].Completed = true;
     } else {
       throw new Error(`No training found for Id: ${training.Id}`);
     }
-  }
 
-  markTrainingInProgress(training): void {
-    const index = this._trainings.findIndex((t) => t.Id === training.Id);
-
-    if (index && index > 0) {
-      this._trainings[index].InProgress = true;
-    } else {
-      throw new Error(`No training found for Id: ${training.Id}`);
-    }
+    return of(this._trainings[index].Id);
   }
 }

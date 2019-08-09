@@ -1,1 +1,31 @@
-<p>available-trainings-list works!</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md"><h1>Current Trainings</h1></div>
+    <div class="col-md"><h1>Available Trainings</h1></div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <ul class="list-group" cdkDropList #inProgressList="cdkDropList" [cdkDropListData]="trainingsInProgress" [cdkDropListConnectedTo]="[notInProgressList]" (cdkDropListDropped)="drop($event)">
+        <li class="list-group-item shadow-sm" cdkDrag [ngClass]="{ 'list-group-item-dark': odd }" *ngFor="let training of trainingsInProgress; let odd = odd; let i = index">
+          <div class="row">
+            <div class="col-md-8">
+              {{ training.Name }}
+            </div>
+            <button type="button" class="btn btn-success float-right" (click)="markComplete(training, i)">Mark Complete</button>
+          </div>
+          <div>
+            <label><strong>Progress %:</strong></label>
+            <ng5-slider [(value)]="training.PercentageComplete" [options]="sliderOptions"></ng5-slider>
+          </div>
+        </li>
+        <li class="list-group-item shadow-sm" *ngIf="trainingsInProgress.length === 0">No trainings in progress.</li>
+      </ul>
+    </div>
+    <div class="col-md">
+      <ul class="list-group" cdkDropList #notInProgressList="cdkDropList" [cdkDropListData]="trainingsNotInProgress" [cdkDropListConnectedTo]="[inProgressList]" (cdkDropListDropped)="drop($event)">
+        <li class="list-group-item shadow-sm" cdkDrag [ngClass]="{ 'list-group-item-dark': odd }" *ngFor="let training of trainingsNotInProgress; let odd = odd">{{ training.Name }}</li>
+        <li class="list-group-item shadow-sm" *ngIf="trainingsNotInProgress.length === 0">No available trainings.</li>
+      </ul>
+    </div>
+  </div>
+</div>
