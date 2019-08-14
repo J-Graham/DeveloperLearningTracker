@@ -48,6 +48,37 @@ describe('TrainingsService', () => {
     });
   });
 
+  describe('#getTrainingById', () => {
+    it('should return an Training by Id', () => {
+      const mockTrainings: ITraining[] = [
+        {
+          Completed: false,
+          DateCompleted: null,
+          DateCreated: new Date('2019-08-08T18:19:31.294Z'),
+          Id: 1,
+          InProgress: false,
+          Name: 'Reading Pragmatic Programmer 20th Edition',
+          PercentageComplete: 55.0,
+        },
+        {
+          Completed: false,
+          DateCompleted: null,
+          DateCreated: new Date('2019-08-08T18:19:31.294Z'),
+          Id: 2,
+          InProgress: false,
+          Name: 'Learning Go',
+          PercentageComplete: 55.0,
+        },
+      ];
+      spyOnProperty(service, 'trainings', 'get').and.returnValue(mockTrainings);
+
+      service.getTrainingById(1).subscribe((training) => {
+        expect(training.Id).toEqual(1);
+        expect(training.Name).toEqual('Reading Pragmatic Programmer 20th Edition');
+      });
+    });
+  });
+
   describe('#addTrainings', () => {
     it('should return an Obeservable<number>', (done: DoneFn) => {
       const mockTraining = {

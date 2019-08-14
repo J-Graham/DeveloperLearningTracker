@@ -5,9 +5,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TrainingsRoutingModule } from './trainings-routing.module';
 import { AvailableTrainingsListComponent } from './available-trainings-list/available-trainings-list.component';
 import { Ng5SliderModule } from 'ng5-slider';
+import { TrainingInfoComponent } from './training-info/training-info.component';
 
 @NgModule({
-  declarations: [AvailableTrainingsListComponent],
+  declarations: [AvailableTrainingsListComponent, TrainingInfoComponent],
   imports: [CommonModule, TrainingsRoutingModule, DragDropModule, Ng5SliderModule],
 })
 export class TrainingsModule {}

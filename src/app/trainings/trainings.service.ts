@@ -46,15 +46,23 @@ export class TrainingsService {
   constructor() {}
 
   getAllTrainings(): Observable<ITraining[]> {
-    return of(this._trainings);
+    return of(this.trainings);
+  }
+
+  getTrainingById(trainingId: number): Observable<ITraining> {
+    return of(
+      this.trainings.find((t) => {
+        return t.Id === trainingId;
+      }),
+    );
   }
 
   getTrainingsInProgress(): Observable<ITraining[]> {
-    return of(this._trainings.filter((t) => t.InProgress === true));
+    return of(this.trainings.filter((t) => t.InProgress === true));
   }
 
   getTrainingsNotInProgress(): Observable<ITraining[]> {
-    return of(this._trainings.filter((t) => t.InProgress === false));
+    return of(this.trainings.filter((t) => t.InProgress === false));
   }
 
   addTraining(training: ITraining): Observable<number> {
@@ -62,7 +70,7 @@ export class TrainingsService {
     const id =
       Math.max.apply(
         Math,
-        this._trainings.map((t) => {
+        this.trainings.map((t) => {
           return t.Id;
         }),
       ) + 1;
@@ -71,7 +79,7 @@ export class TrainingsService {
   }
 
   updateTraining(training: ITraining): void {
-    const index = this._trainings.findIndex((t) => t.Id === training.Id);
+    const index = this.trainings.findIndex((t) => t.Id === training.Id);
 
     if (index >= 0) {
       this._trainings[index] = training;
@@ -81,7 +89,7 @@ export class TrainingsService {
   }
 
   markTrainingComplete(training): Observable<number> {
-    const index = this._trainings.findIndex((t) => t.Id === training.Id);
+    const index = this.trainings.findIndex((t) => t.Id === training.Id);
 
     if (index >= 0) {
       this._trainings[index].InProgress = false;
