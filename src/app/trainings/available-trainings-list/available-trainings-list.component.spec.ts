@@ -6,6 +6,7 @@ import { ITraining } from 'src/app/models/Training';
 import { of } from 'rxjs/internal/observable/of';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { Ng5SliderModule } from 'ng5-slider';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 describe('AvailableTrainingsListComponent', () => {
   let injector: TestBed;
@@ -15,7 +16,7 @@ describe('AvailableTrainingsListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [AvailableTrainingsListComponent],
-      imports: [DragDropModule, Ng5SliderModule],
+      imports: [DragDropModule, Ng5SliderModule, FontAwesomeModule],
       providers: [TrainingsService],
     }).compileComponents();
   }));

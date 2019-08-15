@@ -4,6 +4,7 @@ import { TrainingsService } from '../trainings.service';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Options } from 'ng5-slider';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-available-trainings-list',
   styleUrls: ['./available-trainings-list.component.css'],
@@ -12,6 +13,7 @@ import { Options } from 'ng5-slider';
 export class AvailableTrainingsListComponent implements OnInit {
   trainingsInProgress: ITraining[];
   trainingsNotInProgress: ITraining[];
+  faPlus = faPlus;
   sliderOptions: Options = {
     ceil: 100,
     floor: 0,
@@ -20,11 +22,13 @@ export class AvailableTrainingsListComponent implements OnInit {
   constructor(private trainingService: TrainingsService) {}
 
   ngOnInit(): void {
-    forkJoin(this.trainingService.getTrainingsInProgress(), this.trainingService.getTrainingsNotInProgress()).subscribe((trainingReturns) => {
-      const [trainingsInProgress, trainingsNotInProgress] = trainingReturns;
-      this.trainingsInProgress = trainingsInProgress;
-      this.trainingsNotInProgress = trainingsNotInProgress;
-    });
+    forkJoin(this.trainingService.getTrainingsInProgress(), this.trainingService.getTrainingsNotInProgress()).subscribe(
+      (trainingReturns) => {
+        const [trainingsInProgress, trainingsNotInProgress] = trainingReturns;
+        this.trainingsInProgress = trainingsInProgress;
+        this.trainingsNotInProgress = trainingsNotInProgress;
+      },
+    );
   }
 
   drop(event: CdkDragDrop<string[]>): void {
@@ -37,7 +41,8 @@ export class AvailableTrainingsListComponent implements OnInit {
   }
 
   private flipProgress(event: CdkDragDrop<string[], string[]>): void {
-    ((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress = !((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress;
+    ((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress = !((event.previousContainer
+      .data as any) as ITraining)[event.previousIndex].InProgress;
   }
 
   markComplete(training: ITraining, index: number): void {
