@@ -5,6 +5,7 @@ import { ITraining } from 'src/app/models/Training';
 import { TrainingsService } from '../trainings.service';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../stubs/activated-route-stub';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('TrainingInfoComponent', () => {
   let component: TrainingInfoComponent;
@@ -14,6 +15,7 @@ describe('TrainingInfoComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TrainingInfoComponent],
+      imports: [ReactiveFormsModule],
       providers: [{ provide: ActivatedRoute, useClass: ActivatedRouteStub }],
     }).compileComponents();
   }));
@@ -32,6 +34,11 @@ describe('TrainingInfoComponent', () => {
   });
 
   describe('#ngOninit', () => {
+    it('should create reactive form with defaults', () => {
+      activatedRoute.testParamMap = { trainingId: '0' };
+      component.ngOnInit();
+      expect(component.trainingForm.controls).toBeDefined();
+    });
     it('should populate the training object', () => {
       const mockTrainings: ITraining[] = [
         {

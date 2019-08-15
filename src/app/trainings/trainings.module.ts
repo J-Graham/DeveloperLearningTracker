@@ -7,9 +7,10 @@ import { AvailableTrainingsListComponent } from './available-trainings-list/avai
 import { Ng5SliderModule } from 'ng5-slider';
 import { TrainingInfoComponent } from './training-info/training-info.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AvailableTrainingsListComponent, TrainingInfoComponent],
-  imports: [CommonModule, TrainingsRoutingModule, DragDropModule, Ng5SliderModule, FontAwesomeModule],
+  imports: [CommonModule, ReactiveFormsModule, TrainingsRoutingModule, DragDropModule, Ng5SliderModule, FontAwesomeModule],
 })
 export class TrainingsModule {}
