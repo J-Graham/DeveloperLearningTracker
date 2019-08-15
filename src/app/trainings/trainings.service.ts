@@ -2,7 +2,15 @@ import { Injectable } from '@angular/core';
 import { ITraining } from '../models/Training';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+
+export const newTraining: ITraining = {
+  Completed: false,
+  DateCreated: new Date(),
+  Id: 0,
+  InProgress: false,
+  Name: null,
+  PercentageComplete: 0.0,
+};
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +53,10 @@ export class TrainingsService {
 
   constructor() {}
 
+  getNewTraining(): ITraining {
+    return { ...newTraining };
+  }
+
   getAllTrainings(): Observable<ITraining[]> {
     return of(this.trainings);
   }
@@ -62,7 +74,7 @@ export class TrainingsService {
   }
 
   getTrainingsNotInProgress(): Observable<ITraining[]> {
-    return of(this.trainings.filter((t) => t.InProgress === false));
+    return of(this._trainings.filter((t) => t.InProgress === false));
   }
 
   addTraining(training: ITraining): Observable<number> {
@@ -79,7 +91,7 @@ export class TrainingsService {
   }
 
   updateTraining(training: ITraining): void {
-    const index = this.trainings.findIndex((t) => t.Id === training.Id);
+    const index = this._trainings.findIndex((t) => t.Id === training.Id);
 
     if (index >= 0) {
       this._trainings[index] = training;
@@ -101,5 +113,15 @@ export class TrainingsService {
     }
 
     return of(this._trainings[index].Id);
+  }
+
+  deleteTraining(trainingId: number): void {
+    const index = this.trainings.findIndex((t) => t.Id === trainingId);
+
+    if (index >= 0) {
+      this.trainings.splice(index, 1);
+    } else {
+      throw new Error(`No training found for Id: ${trainingId}`);
+    }
   }
 }

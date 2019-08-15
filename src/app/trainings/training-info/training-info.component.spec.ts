@@ -1,21 +1,24 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { TrainingInfoComponent } from './training-info.component';
 import { ITraining } from 'src/app/models/Training';
 import { TrainingsService } from '../trainings.service';
-import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../stubs/activated-route-stub';
-import { ReactiveFormsModule } from '@angular/forms';
 
 describe('TrainingInfoComponent', () => {
   let component: TrainingInfoComponent;
   let fixture: ComponentFixture<TrainingInfoComponent>;
   let service: TrainingsService;
   let activatedRoute: ActivatedRouteStub;
+  let router: Router;
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TrainingInfoComponent],
-      imports: [ReactiveFormsModule],
+      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes([])],
       providers: [{ provide: ActivatedRoute, useClass: ActivatedRouteStub }],
     }).compileComponents();
   }));
@@ -25,6 +28,7 @@ describe('TrainingInfoComponent', () => {
     component = fixture.componentInstance;
     service = TestBed.get(TrainingsService);
     activatedRoute = TestBed.get(ActivatedRoute);
+    router = TestBed.get(Router);
     activatedRoute.testParamMap = { trainingId: '1' };
     fixture.detectChanges();
   });
@@ -65,6 +69,22 @@ describe('TrainingInfoComponent', () => {
       component.ngOnInit();
       expect(component.training.Id).toBe(1);
       expect(component.training).toEqual(mockTrainings[0]);
+    });
+  });
+
+  describe('#saveForm', () => {
+    it('should navigate to list when form is valid', () => {
+      spyOn(router, 'navigate');
+      component.ngOnInit();
+      component.trainingForm.patchValue({ Name: 'Test Form' });
+      component.saveForm();
+      expect(router.navigate).toHaveBeenCalled();
+    });
+    it('should not navigate to list when form is in-valid', () => {
+      spyOn(router, 'navigate');
+      component.ngOnInit();
+      component.saveForm();
+      expect(router.navigate).not.toHaveBeenCalled();
     });
   });
 });

@@ -4,7 +4,7 @@ import { TrainingsService } from '../trainings.service';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Options } from 'ng5-slider';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-available-trainings-list',
   styleUrls: ['./available-trainings-list.component.css'],
@@ -14,6 +14,8 @@ export class AvailableTrainingsListComponent implements OnInit {
   trainingsInProgress: ITraining[];
   trainingsNotInProgress: ITraining[];
   faPlus = faPlus;
+  faTrashAlt = faTrashAlt;
+  dragging = false;
   sliderOptions: Options = {
     ceil: 100,
     floor: 0,
@@ -22,13 +24,11 @@ export class AvailableTrainingsListComponent implements OnInit {
   constructor(private trainingService: TrainingsService) {}
 
   ngOnInit(): void {
-    forkJoin(this.trainingService.getTrainingsInProgress(), this.trainingService.getTrainingsNotInProgress()).subscribe(
-      (trainingReturns) => {
-        const [trainingsInProgress, trainingsNotInProgress] = trainingReturns;
-        this.trainingsInProgress = trainingsInProgress;
-        this.trainingsNotInProgress = trainingsNotInProgress;
-      },
-    );
+    forkJoin(this.trainingService.getTrainingsInProgress(), this.trainingService.getTrainingsNotInProgress()).subscribe((trainingReturns) => {
+      const [trainingsInProgress, trainingsNotInProgress] = trainingReturns;
+      this.trainingsInProgress = trainingsInProgress;
+      this.trainingsNotInProgress = trainingsNotInProgress;
+    });
   }
 
   drop(event: CdkDragDrop<string[]>): void {
@@ -41,8 +41,19 @@ export class AvailableTrainingsListComponent implements OnInit {
   }
 
   private flipProgress(event: CdkDragDrop<string[], string[]>): void {
-    ((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress = !((event.previousContainer
-      .data as any) as ITraining)[event.previousIndex].InProgress;
+    ((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress = !((event.previousContainer.data as any) as ITraining)[event.previousIndex].InProgress;
+  }
+
+  removeTraining(trainingID: number): void {
+    try {
+      this.trainingService.deleteTraining(trainingID);
+    } catch (e) {
+      console.error(`Couldn't delete record: ${e};
+      }`);
+    }
+    this.trainingService.getTrainingsNotInProgress().subscribe((trainings) => {
+      this.trainingsNotInProgress = trainings;
+    });
   }
 
   markComplete(training: ITraining, index: number): void {

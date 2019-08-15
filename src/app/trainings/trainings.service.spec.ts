@@ -17,6 +17,25 @@ describe('TrainingsService', () => {
     service = injector.get(TrainingsService);
   });
 
+  describe('#getNewTraining', () => {
+    it('should return new training object with defaults', () => {
+      const mockTraining: ITraining = {
+        Completed: false,
+        DateCreated: new Date(),
+        Id: 0,
+        InProgress: false,
+        Name: null,
+        PercentageComplete: 0.0,
+      };
+      const expected = service.getNewTraining();
+      expect(expected.Id).toBe(0);
+      expect(expected.Completed).toBe(false);
+      expect(expected.InProgress).toBe(false);
+      expect(expected.Name).toBe(null);
+      expect(expected.PercentageComplete).toBe(0.0);
+    });
+  });
+
   describe('#getTrainings', () => {
     it('should return an Obeservable<ITraining[]>', () => {
       const mockTrainings: ITraining[] = [
@@ -157,6 +176,60 @@ describe('TrainingsService', () => {
       };
 
       expect(() => service.markTrainingComplete(mockTraining)).toThrow(new Error(`No training found for Id: ${mockTraining.Id}`));
+    });
+  });
+
+  describe('#deleteTraining', () => {
+    it('should delete training by id', () => {
+      const mockTrainings: ITraining[] = [
+        {
+          Completed: false,
+          DateCompleted: null,
+          DateCreated: new Date('2019-08-08T18:19:31.294Z'),
+          Id: 1,
+          InProgress: false,
+          Name: 'Reading Pragmatic Programmer 20th Edition',
+          PercentageComplete: 55.0,
+        },
+        {
+          Completed: false,
+          DateCompleted: null,
+          DateCreated: new Date('2019-08-08T18:19:31.294Z'),
+          Id: 2,
+          InProgress: false,
+          Name: 'Learning Go',
+          PercentageComplete: 55.0,
+        },
+      ];
+      spyOnProperty(service, 'trainings', 'get').and.returnValue(mockTrainings);
+      service.deleteTraining(1);
+      expect(service.trainings.length).toBe(1);
+      expect(service.trainings[0].Id).toBe(2);
+    });
+    it(`should throw and error when trying to delete training that isn't found`, () => {
+      const mockTrainings: ITraining[] = [
+        {
+          Completed: false,
+          DateCompleted: null,
+          DateCreated: new Date('2019-08-08T18:19:31.294Z'),
+          Id: 1,
+          InProgress: false,
+          Name: 'Reading Pragmatic Programmer 20th Edition',
+          PercentageComplete: 55.0,
+        },
+        {
+          Completed: false,
+          DateCompleted: null,
+          DateCreated: new Date('2019-08-08T18:19:31.294Z'),
+          Id: 2,
+          InProgress: false,
+          Name: 'Learning Go',
+          PercentageComplete: 55.0,
+        },
+      ];
+      spyOnProperty(service, 'trainings', 'get').and.returnValue(mockTrainings);
+
+      expect(() => service.deleteTraining(3)).toThrow(new Error(`No training found for Id: 3`));
     });
   });
   it('should be created', () => {

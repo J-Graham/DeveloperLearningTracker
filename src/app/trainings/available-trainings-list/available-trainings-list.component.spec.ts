@@ -125,4 +125,12 @@ describe('AvailableTrainingsListComponent', () => {
       expect(service.trainings[0].DateCompleted).not.toBeNull();
     }));
   });
+
+  describe('#removeTraining', () => {
+    it('should call remove training when clicked', () => {
+      spyOn(service, 'deleteTraining');
+      component.removeTraining(1);
+      expect(service.deleteTraining).toHaveBeenCalled();
+    });
+  });
 });
