@@ -74,7 +74,7 @@ export class TrainingsService {
   }
 
   getTrainingsNotInProgress(): Observable<ITraining[]> {
-    return of(this._trainings.filter((t) => t.InProgress === false && t.Completed === false));
+    return of(this.trainings.filter((t) => t.InProgress === false && t.Completed === false));
   }
 
   addTraining(training: ITraining): Observable<number> {
@@ -87,14 +87,14 @@ export class TrainingsService {
         }),
       ) + 1;
 
-    return of(this._trainings.push(Object.assign(training, { DateCreated: dateCreated, Id: id }))).pipe(map(() => id));
+    return of(this.trainings.push(Object.assign(training, { DateCreated: dateCreated, Id: id }))).pipe(map(() => id));
   }
 
   updateTraining(training: ITraining): void {
-    const index = this._trainings.findIndex((t) => t.Id === training.Id);
+    const index = this.trainings.findIndex((t) => t.Id === training.Id);
 
     if (index >= 0) {
-      this._trainings[index] = training;
+      this.trainings[index] = training;
     } else {
       throw new Error(`No training found for Id: ${training.Id}`);
     }
@@ -104,15 +104,15 @@ export class TrainingsService {
     const index = this.trainings.findIndex((t) => t.Id === training.Id);
 
     if (index >= 0) {
-      this._trainings[index].InProgress = false;
-      this._trainings[index].DateCompleted = new Date();
-      this._trainings[index].PercentageComplete = 100.0;
-      this._trainings[index].Completed = true;
+      this.trainings[index].InProgress = false;
+      this.trainings[index].DateCompleted = new Date();
+      this.trainings[index].PercentageComplete = 100.0;
+      this.trainings[index].Completed = true;
     } else {
       throw new Error(`No training found for Id: ${training.Id}`);
     }
 
-    return of(this._trainings[index].Id);
+    return of(this.trainings[index].Id);
   }
 
   deleteTraining(trainingId: number): void {
