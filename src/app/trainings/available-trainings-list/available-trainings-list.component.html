@@ -20,15 +20,13 @@
     </div>
 
     <div class="col-md-6">
-      <ul class="list-group" cdkDropList #inProgressList="cdkDropList" [cdkDropListData]="trainingsInProgress"
-        [cdkDropListConnectedTo]="[notInProgressList]" (cdkDropListDropped)="drop($event)">
-        <li class="list-group-item shadow-sm" cdkDrag [ngClass]="{ 'list-group-item-dark': odd }"
-          *ngFor="let training of trainingsInProgress; let odd = odd; let i = index">
+      <ul class="list-group" cdkDropList #inProgressList="cdkDropList" [cdkDropListData]="trainingsInProgress" [cdkDropListConnectedTo]="[notInProgressList]" (cdkDropListDropped)="drop($event)">
+        <li class="list-group-item shadow-sm" cdkDrag [ngClass]="{ 'list-group-item-dark': odd }" *ngFor="let training of trainingsInProgress; let odd = odd; let i = index">
           <div class="row">
             <div class="col-md-8">
               {{ training.Name }}
             </div>
-            <button type="button" class="col-md btn btn-success float-right" (click)="markComplete(training, i)">
+            <button (saConfirm)="markComplete(training, i)" type="button" class="col-md btn btn-success float-right">
               Mark Complete
             </button>
           </div>
@@ -43,20 +41,23 @@
     <div class="col-md d-md-none" style="margin-top: 10px">
       <div class="row">
         <h1 class="col-xs">Available Trainings</h1>
-        <a class="btn btn-primary col-xs" routerLink="../traininginfo/0">
-          <fa-icon [icon]="faPlus"></fa-icon>
-        </a>
       </div>
+      <a class="btn btn-primary col-xs" routerLink="../traininginfo/0">
+        <fa-icon [icon]="faPlus"></fa-icon>
+      </a>
     </div>
     <div class="col-md-6">
-      <ul class="list-group" cdkDropList #notInProgressList="cdkDropList" [cdkDropListData]="trainingsNotInProgress"
-        [cdkDropListConnectedTo]="[inProgressList]" (cdkDropListDropped)="drop($event)">
-        <li *ngFor="let training of trainingsNotInProgress; let odd = odd" (cdkDragMoved)="dragging = true;"
-          (cdkDragReleased)="dragging = false;" class="list-group-item shadow-sm col-md-8" cdkDrag
-          [ngClass]="{ 'list-group-item-dark': odd }">
+      <ul class="list-group" cdkDropList #notInProgressList="cdkDropList" [cdkDropListData]="trainingsNotInProgress" [cdkDropListConnectedTo]="[inProgressList]" (cdkDropListDropped)="drop($event)">
+        <li
+          *ngFor="let training of trainingsNotInProgress; let odd = odd"
+          (cdkDragMoved)="dragging = true"
+          (cdkDragReleased)="dragging = false"
+          class="list-group-item shadow-sm col-md-8"
+          cdkDrag
+          [ngClass]="{ 'list-group-item-dark': odd }"
+        >
           {{ training.Name }}
-          <button type="button" class="btn btn-danger float-right" (click)="removeTraining(training.Id)"
-            [ngStyle]="{opacity: dragging ? .2 : 1}">
+          <button (saConfirm)="removeTraining(training.Id)" type="button" class="btn btn-danger float-right" [ngStyle]="{ opacity: dragging ? 0.2 : 1 }">
             <fa-icon [icon]="faTrashAlt"></fa-icon>
           </button>
         </li>

@@ -74,7 +74,7 @@ export class TrainingsService {
   }
 
   getTrainingsNotInProgress(): Observable<ITraining[]> {
-    return of(this._trainings.filter((t) => t.InProgress === false));
+    return of(this._trainings.filter((t) => t.InProgress === false && t.Completed === false));
   }
 
   addTraining(training: ITraining): Observable<number> {
