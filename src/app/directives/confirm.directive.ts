@@ -1,10 +1,24 @@
-import { Directive, OnInit, ComponentRef, ViewContainerRef, ComponentFactoryResolver, Output, EventEmitter, OnDestroy, HostListener } from '@angular/core';
+import { Directive, OnInit, ComponentRef, ViewContainerRef, ComponentFactoryResolver, Output, EventEmitter, OnDestroy, HostListener, Input } from '@angular/core';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { Subscription } from 'rxjs';
-import { SweetAlertOptions } from 'sweetalert2';
+import { SweetAlertOptions, SweetAlertType } from 'sweetalert2';
+
+export interface IConfirmConfig {
+  saConfirmOptions?: SweetAlertOptions;
+}
 
 @Directive({ selector: '[saConfirm]' })
 export class SaConfirmDirective implements OnInit, OnDestroy {
+  /**
+   * Pass in a SweetAlertOptions object that will override any of the default properties.
+   *
+   * Example:
+   *       confirmOptions = {
+   *          confirmButtonText: 'sure... I guess',
+   *       };
+   */
+  @Input() public readonly saConfirmOptions: SweetAlertOptions = {};
+
   /**
    * Emits when the user clicks "Confirm".
    * Bears a value when using "input", resolved "preConfirm", etc.
@@ -35,11 +49,11 @@ export class SaConfirmDirective implements OnInit, OnDestroy {
   private swalOptions: SweetAlertOptions = {
     cancelButtonClass: 'btn btn-swal-override',
     confirmButtonClass: 'btn btn-swal-override',
-    confirmButtonText: 'Yes, do it!',
+    confirmButtonText: this.saConfirmOptions && this.saConfirmOptions.confirmButtonText ? this.saConfirmOptions.confirmButtonText : 'Yes, do it!',
     showCancelButton: true,
-    text: 'You wont be able to revert this!',
-    title: 'Are you sure?',
-    type: 'warning',
+    text: this.saConfirmOptions && this.saConfirmOptions.text ? this.saConfirmOptions.text : 'You wont be able to revert this!',
+    title: this.saConfirmOptions && this.saConfirmOptions.title ? this.saConfirmOptions.title : 'Are you sure?',
+    type: this.saConfirmOptions && this.saConfirmOptions.type ? this.saConfirmOptions.type : 'warning',
   };
 
   private confirmSubscription: Subscription;
@@ -59,6 +73,8 @@ export class SaConfirmDirective implements OnInit, OnDestroy {
 
     this.confirmSubscription = this.swalInstance.confirm.asObservable().subscribe((v) => this.saConfirm.emit(v));
     this.cancelSubscription = this.swalInstance.cancel.asObservable().subscribe((v) => this.cancel.emit(v));
+
+    this.swalOptions = Object.assign(this.swalOptions, this.saConfirmOptions);
   }
 
   /**
@@ -84,7 +100,12 @@ export class SaConfirmDirective implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopImmediatePropagation();
     event.stopPropagation();
-    this.swalInstance.options = this.swalOptions;
+
+    // override any of the passed in options vs the default options
+    if (this.swalOptions) {
+      this.swalInstance.options = this.swalOptions;
+    }
+
     this.swalInstance.show();
   }
 }
