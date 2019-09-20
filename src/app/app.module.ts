@@ -5,14 +5,12 @@ import { AppComponent } from './app.component';
 import { TrainingsModule } from './trainings/trainings.module';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
-import { SaConfirmDirective } from './directives/confirm.directive';
-import { SwalComponent, SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [AppComponent, NavbarComponent],
-  entryComponents: [SwalComponent],
-  imports: [BrowserModule, HttpClientModule, TrainingsModule, RouterModule],
+  imports: [BrowserModule, HttpClientModule, TrainingsModule, RouterModule, SweetAlert2Module.forRoot()],
   providers: [],
 })
 export class AppModule {}

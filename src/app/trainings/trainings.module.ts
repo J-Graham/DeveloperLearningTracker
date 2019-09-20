@@ -8,11 +8,10 @@ import { Ng5SliderModule } from 'ng5-slider';
 import { TrainingInfoComponent } from './training-info/training-info.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SaConfirmDirective } from '../directives/confirm.directive';
-import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { ConfirmationModule } from '../confirmation/confirmation.module';
 
 @NgModule({
-  declarations: [AvailableTrainingsListComponent, TrainingInfoComponent, SaConfirmDirective],
-  imports: [CommonModule, ReactiveFormsModule, TrainingsRoutingModule, DragDropModule, Ng5SliderModule, FontAwesomeModule, SweetAlert2Module.forRoot()],
+  declarations: [AvailableTrainingsListComponent, TrainingInfoComponent],
+  imports: [CommonModule, ReactiveFormsModule, TrainingsRoutingModule, DragDropModule, Ng5SliderModule, FontAwesomeModule, ConfirmationModule],
 })
 export class TrainingsModule {}
